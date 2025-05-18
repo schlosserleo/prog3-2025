@@ -3,8 +3,8 @@ package domainLogic.cake;
 import domainLogic.cake.parts.Krem;
 import domainLogic.cake.parts.Obst;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Collection;
-import java.util.Set;
 import kuchen.Allergen;
 import kuchen.Obsttorte;
 
@@ -13,8 +13,8 @@ public class ObsttorteImpl extends CakeProductImpl implements Obsttorte {
   private final Obst obst;
 
   public ObsttorteImpl(BigDecimal preis, int naehrwert,
-      Collection<Allergen> allergene, Krem krem, Obst obst) {
-    super(preis, naehrwert, allergene);
+      Collection<Allergen> allergene, Duration haltbarkeit, Krem krem, Obst obst) {
+    super(preis, naehrwert, allergene, haltbarkeit);
     this.krem = krem;
     this.obst = obst;
   }
