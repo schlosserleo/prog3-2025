@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import kuchen.Allergen;
-import verwaltung.Hersteller;
 import verwaltung.Verkaufsobjekt;
 
 public class KuchenAutomat {
@@ -33,8 +32,8 @@ public class KuchenAutomat {
     this.nextFreeSlot = 0;
   }
 
-  public boolean create(String cakeType, Hersteller hersteller, BigDecimal preis, int naehrwert,
-      HashSet<Allergen> allergene, Duration haltbarkeit, Krem krem, Obst obst) {
+  public boolean create(String cakeType, HerstellerImpl hersteller, BigDecimal preis, int naehrwert,
+      HashSet<Allergen> allergene, Duration haltbarkeit, Obst obst, Krem krem) {
     CakeProductMutable kuchen = this.kuchenFactory.createCake(cakeType, preis, allergene, null,
         naehrwert, haltbarkeit, obst, krem);
     return insert(hersteller, kuchen);
@@ -85,7 +84,7 @@ public class KuchenAutomat {
     return maxCakes;
   }
 
-  private boolean insert(Hersteller hersteller, CakeProductMutable kuchen) {
+  private boolean insert(HerstellerImpl hersteller, CakeProductMutable kuchen) {
     if (!(this.herstellerVerwaltung.containsHersteller(hersteller))) {
       return false;
     }
@@ -99,6 +98,14 @@ public class KuchenAutomat {
     this.kuchenList.put(nextFreeSlot, kuchen);
     this.indexMap.put(kuchen, nextFreeSlot);
     return true;
+  }
+
+  public HashSet<Allergen> getAllergene() {
+    HashSet<Allergen> result = new HashSet<>();
+    for (CakeProduct cake : this.kuchenList.values()) {
+      result.addAll(cake.getAllergene());
+    }
+    return result;
   }
 
   private boolean isFachnummerValid(int fachnummer) {

@@ -20,12 +20,15 @@ import java.util.HashSet;
 import kuchen.Allergen;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import verwaltung.Hersteller;
 
 class KuchenAutomatTest {
 
   private HerstellerVerwaltung herstellerVerwaltung;
-  private Hersteller hersteller;
+  private HerstellerImpl hersteller;
+  private BigDecimal preis;
+  private int naehrwert;
+  private Krem krem;
+  private Obst obst;
   private KuchenAutomat kuchenAutomat;
   private HashSet<Allergen> allergens;
   private Duration standardHaltbarkeit;
@@ -34,6 +37,10 @@ class KuchenAutomatTest {
   void setUp() {
     herstellerVerwaltung = new HerstellerVerwaltung();
     hersteller = new HerstellerImpl("peter");
+    preis = BigDecimal.valueOf(100);
+    krem = new Krem("Sahne");
+    obst = new Obst("Erdbeere");
+    naehrwert = 12;
     herstellerVerwaltung.addHersteller(hersteller);
     kuchenAutomat = new KuchenAutomat(100, herstellerVerwaltung);
     allergens = new HashSet<>();
@@ -47,16 +54,16 @@ class KuchenAutomatTest {
     when(mockHerstellerVerwaltung.getHersteller("peter")).thenReturn(hersteller);
 
     KuchenAutomat kuchenAutomat = new KuchenAutomat(100, mockHerstellerVerwaltung);
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Krem("Karamel"));
+    kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        null, krem);
 
     verify(mockHerstellerVerwaltung, times(1)).containsHersteller(hersteller);
   }
 
   @Test
   void deleteCallsRemoveOnKuchenAutomat() {
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Krem("Karamel"));
+    kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        null, krem);
 
     KuchenAutomat mockedKuchenAutomat = mock(KuchenAutomat.class);
     mockedKuchenAutomat.delete(1);
@@ -70,8 +77,8 @@ class KuchenAutomatTest {
     herstellerVerwaltung.addHersteller(hersteller);
     kuchenAutomat = new KuchenAutomat(100, herstellerVerwaltung);
 
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Krem("Karamel"));
+    kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        null, krem);
     assertEquals(1, kuchenAutomat.read().size());
   }
 
@@ -81,13 +88,11 @@ class KuchenAutomatTest {
     herstellerVerwaltung.addHersteller(hersteller);
     kuchenAutomat = new KuchenAutomat(100, herstellerVerwaltung);
 
-    HashSet<Allergen> allergensTwo = new HashSet<>();
-    allergensTwo.add(Allergen.Gluten);
+    kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        null, krem);
 
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Krem("Karamel"));
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(2398.123), 913, allergensTwo,
-        standardHaltbarkeit, new Obst("Apfel"));
+    kuchenAutomat.create("Obstkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        obst, null);
 
     ArrayList<CakeProduct> listToCompare = new ArrayList<>();
     listToCompare.add(kuchenAutomat.read(1));
@@ -102,8 +107,9 @@ class KuchenAutomatTest {
     herstellerVerwaltung.addHersteller(hersteller);
     kuchenAutomat = new KuchenAutomat(100, herstellerVerwaltung);
 
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Krem("Karamel"));
+    kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        null, krem);
+
     kuchenAutomat.delete(1);
     assertEquals(0, kuchenAutomat.read().size());
   }
@@ -114,8 +120,9 @@ class KuchenAutomatTest {
     herstellerVerwaltung.addHersteller(hersteller);
     kuchenAutomat = new KuchenAutomat(100, herstellerVerwaltung);
 
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Krem("Karamel"));
+    kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        null, krem);
+
     Date now = Date.from(Instant.now());
     try {
       Thread.sleep(500);
@@ -132,12 +139,15 @@ class KuchenAutomatTest {
     herstellerVerwaltung.addHersteller(hersteller);
     kuchenAutomat = new KuchenAutomat(100, herstellerVerwaltung);
 
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Krem("Karamel"));
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Obst("Apfel"));
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Krem("Karamel"), new Obst("Erdbeere"));
+    kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        null, krem);
+
+    kuchenAutomat.create("Obstkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        obst, null);
+
+    kuchenAutomat.create("Obsttorte", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        obst, krem);
+
     assertEquals(3, kuchenAutomat.read().size());
   }
 
@@ -147,14 +157,17 @@ class KuchenAutomatTest {
     herstellerVerwaltung.addHersteller(hersteller);
     kuchenAutomat = new KuchenAutomat(100, herstellerVerwaltung);
 
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Krem("Karamel"));
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Krem("Karamel"));
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Krem("Karamel"));
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        standardHaltbarkeit, new Obst("Birne"));
+    kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        null, krem);
+
+    kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        null, krem);
+
+    kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        null, krem);
+
+    kuchenAutomat.create("Obstkuchen", hersteller, preis, naehrwert, allergens, standardHaltbarkeit,
+        obst, null);
     assertEquals(3, kuchenAutomat.read(KremkuchenImpl.class).size());
   }
 
@@ -162,19 +175,21 @@ class KuchenAutomatTest {
   void testCapacity() {
     kuchenAutomat = new KuchenAutomat(10, herstellerVerwaltung);
     for (int i = 1; i <= 20; i++) {
-      kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-          standardHaltbarkeit, new Krem("Karamel"));
+      kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens,
+          standardHaltbarkeit, null, krem);
     }
     assertEquals(10, kuchenAutomat.read().size());
   }
 
   @Test
-  void testRemainingHaltbarkeit() throws InterruptedException {
-    kuchenAutomat.create(hersteller, BigDecimal.valueOf(12398.123), 9123, allergens,
-        Duration.ofMillis(10000), new Krem("Karamel"));
-    Thread.sleep(1000);
+  void testRemainingHaltbarkeit() {
+    kuchenAutomat.create("Kremkuchen", hersteller, preis, naehrwert, allergens,
+        Duration.ofMillis(10000), null, krem);
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
     assertTrue(kuchenAutomat.read(1).getRemainingHaltbarkeit().toMillis() <= 9000);
   }
 }
-
-

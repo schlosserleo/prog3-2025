@@ -1,19 +1,19 @@
 package events;
 
+import domainLogic.HerstellerImpl;
 import domainLogic.cake.parts.Krem;
 import domainLogic.cake.parts.Obst;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.HashSet;
 import kuchen.Allergen;
-import verwaltung.Hersteller;
 
 public class CreateCakeEvent extends ResponseEvent {
 
   private final String cakeType;
   private final BigDecimal preis;
   private final HashSet<Allergen> allergene;
-  private final Hersteller hersteller;
+  private final HerstellerImpl hersteller;
   private final Duration haltbarkeit;
   private final int naehrwert;
 
@@ -44,7 +44,7 @@ public class CreateCakeEvent extends ResponseEvent {
     return this.preis;
   }
 
-  public Hersteller getHersteller() {
+  public HerstellerImpl getHersteller() {
     return this.hersteller;
   }
 
@@ -69,7 +69,7 @@ public class CreateCakeEvent extends ResponseEvent {
     private final String cakeType;
     private final BigDecimal preis;
     private final HashSet<Allergen> allergene;
-    private final Hersteller hersteller;
+    private final HerstellerImpl hersteller;
     private final Duration haltbarkeit;
     private final int naehrwert;
     private final Object source;
@@ -77,7 +77,7 @@ public class CreateCakeEvent extends ResponseEvent {
     private Krem krem;
 
     public cakeEventBuilder(Object source, String cakeType, BigDecimal preis,
-        HashSet<Allergen> allergene, int naehrwert, Duration haltbarkeit, Hersteller hersteller) {
+        HashSet<Allergen> allergene, int naehrwert, Duration haltbarkeit, HerstellerImpl hersteller) {
       this.source = source;
       this.cakeType = cakeType;
       this.preis = preis;

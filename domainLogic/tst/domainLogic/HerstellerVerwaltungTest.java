@@ -1,6 +1,6 @@
 package domainLogic;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashSet;
 import verwaltung.Hersteller;
@@ -13,9 +13,9 @@ class HerstellerVerwaltungTest {
     expectedHerstellerListe.add(new HerstellerImpl("Kuchenmeister"));
     expectedHerstellerListe.add(new HerstellerImpl("doktorSchlecker"));
 
-    Hersteller customerOne = new HerstellerImpl("Kuchenmeister");
-    Hersteller customerTwo = new HerstellerImpl("doktorSchlecker");
-    Hersteller customerThree = new HerstellerImpl("Kuchenmeister");
+    HerstellerImpl customerOne = new HerstellerImpl("Kuchenmeister");
+    HerstellerImpl customerTwo = new HerstellerImpl("doktorSchlecker");
+    HerstellerImpl customerThree = new HerstellerImpl("Kuchenmeister");
     HerstellerVerwaltung herstellerVerwaltung = new HerstellerVerwaltung();
     herstellerVerwaltung.addHersteller(customerOne);
     herstellerVerwaltung.addHersteller(customerTwo);
