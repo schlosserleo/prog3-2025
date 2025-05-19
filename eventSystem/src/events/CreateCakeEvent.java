@@ -8,47 +8,48 @@ import java.util.HashSet;
 import kuchen.Allergen;
 import verwaltung.Hersteller;
 
-public class CreateCakeEvent extends ResponseEvent implements CreateCakeEventSetup {
+public class CreateCakeEvent extends ResponseEvent {
 
   private final String cakeType;
   private final BigDecimal preis;
   private final HashSet<Allergen> allergene;
   private final Hersteller hersteller;
   private final Duration haltbarkeit;
-  private final Integer naehrwert;
+  private final int naehrwert;
 
-  private Krem krem = null;
-  private Obst obst = null;
+  private final Obst obst;
+  private final Krem krem;
 
-  public CreateCakeEvent(Object source, String cakeType, BigDecimal preis,
-      HashSet<Allergen> allergene, Hersteller hersteller, Integer naehrwert, Duration haltbarkeit) {
+  public CreateCakeEvent(Object source, cakeEventBuilder builder) {
     super(source);
-    this.cakeType = cakeType;
-    this.preis = preis;
-    this.allergene = allergene;
-    this.hersteller = hersteller;
-    this.naehrwert = naehrwert;
-    this.haltbarkeit = haltbarkeit;
+    this.cakeType = builder.cakeType;
+    this.preis = builder.preis;
+    this.allergene = builder.allergene;
+    this.naehrwert = builder.naehrwert;
+    this.hersteller = builder.hersteller;
+    this.haltbarkeit = builder.haltbarkeit;
+    this.obst = builder.obst;
+    this.krem = builder.krem;
   }
 
   public String getCakeType() {
     return this.cakeType;
   }
 
-  public BigDecimal getPreis() {
-    return this.preis;
-  }
-
-  public int getNaehrwert() {
-    return this.naehrwert;
-  }
-
   public HashSet<Allergen> getAllergene() {
     return this.allergene;
   }
 
+  public BigDecimal getPreis() {
+    return this.preis;
+  }
+
   public Hersteller getHersteller() {
     return this.hersteller;
+  }
+
+  public int getNaehrwert() {
+    return this.naehrwert;
   }
 
   public Duration getHaltbarkeit() {
@@ -59,15 +60,47 @@ public class CreateCakeEvent extends ResponseEvent implements CreateCakeEventSet
     return this.obst;
   }
 
-  public void setObst(Obst obst) {
-    this.obst = obst;
-  }
-
   public Krem getKrem() {
     return this.krem;
   }
 
-  public void setKrem(Krem krem) {
-    this.krem = krem;
+  public static class cakeEventBuilder {
+
+    private final String cakeType;
+    private final BigDecimal preis;
+    private final HashSet<Allergen> allergene;
+    private final Hersteller hersteller;
+    private final Duration haltbarkeit;
+    private final int naehrwert;
+    private final Object source;
+    private Obst obst;
+    private Krem krem;
+
+    public cakeEventBuilder(Object source, String cakeType, BigDecimal preis,
+        HashSet<Allergen> allergene, int naehrwert, Duration haltbarkeit, Hersteller hersteller) {
+      this.source = source;
+      this.cakeType = cakeType;
+      this.preis = preis;
+      this.allergene = allergene;
+      this.naehrwert = naehrwert;
+      this.haltbarkeit = haltbarkeit;
+      this.hersteller = hersteller;
+      this.obst = null;
+      this.krem = null;
+    }
+
+    public cakeEventBuilder obst(Obst obst) {
+      this.obst = obst;
+      return this;
+    }
+
+    public cakeEventBuilder krem(Krem krem) {
+      this.krem = krem;
+      return this;
+    }
+
+    public CreateCakeEvent build() {
+      return new CreateCakeEvent(this.source, this);
+    }
   }
 }

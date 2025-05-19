@@ -2,16 +2,14 @@ package domainLogic;
 
 import domainLogic.cake.CakeProduct;
 import domainLogic.cake.CakeProductMutable;
-import domainLogic.cake.KremkuchenImpl;
-import domainLogic.cake.ObstkuchenImpl;
-import domainLogic.cake.ObsttorteImpl;
+import domainLogic.cake.KuchenFactory;
 import domainLogic.cake.parts.Krem;
 import domainLogic.cake.parts.Obst;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import kuchen.Allergen;
 import verwaltung.Hersteller;
@@ -22,32 +20,24 @@ public class KuchenAutomat {
   public final HashMap<Verkaufsobjekt, Integer> indexMap;
   private final HashMap<Integer, CakeProductMutable> kuchenList;
   private final HerstellerVerwaltung herstellerVerwaltung;
+  private final KuchenFactory kuchenFactory;
   private final int maxCakes;
   private int nextFreeSlot;
 
   public KuchenAutomat(int maxCakes, HerstellerVerwaltung herstellerVerwaltung) {
     this.kuchenList = new HashMap<>();
     this.indexMap = new HashMap<>();
+    this.kuchenFactory = new KuchenFactory();
     this.herstellerVerwaltung = herstellerVerwaltung;
     this.maxCakes = maxCakes;
     this.nextFreeSlot = 0;
   }
 
-
-  public boolean create(Hersteller hersteller, BigDecimal preis, int naehrwert,
-      Collection<Allergen> allergene, Duration haltbarkeit, Krem krem) {
-    return insert(hersteller, new KremkuchenImpl(preis, naehrwert, allergene, haltbarkeit, krem));
-  }
-
-  public boolean create(Hersteller hersteller, BigDecimal preis, int naehrwert,
-      Collection<Allergen> allergene, Duration haltbarkeit, Obst obst) {
-    return insert(hersteller, new ObstkuchenImpl(preis, naehrwert, allergene, haltbarkeit, obst));
-  }
-
-  public boolean create(Hersteller hersteller, BigDecimal preis, int naehrwert,
-      Collection<Allergen> allergene, Duration haltbarkeit, Krem krem, Obst obst) {
-    return insert(hersteller,
-        new ObsttorteImpl(preis, naehrwert, allergene, haltbarkeit, krem, obst));
+  public boolean create(String cakeType, Hersteller hersteller, BigDecimal preis, int naehrwert,
+      HashSet<Allergen> allergene, Duration haltbarkeit, Krem krem, Obst obst) {
+    CakeProductMutable kuchen = this.kuchenFactory.createCake(cakeType, preis, allergene, null,
+        naehrwert, haltbarkeit, obst, krem);
+    return insert(hersteller, kuchen);
   }
 
 
@@ -60,7 +50,7 @@ public class KuchenAutomat {
   }
 
 
-  public ArrayList<CakeProduct> read(Class<? extends CakeProduct> kuchenSorte) {
+  public ArrayList<CakeProduct> read(Class<?> kuchenSorte) {
     ArrayList<CakeProduct> result = new ArrayList<>();
     for (Map.Entry<Integer, CakeProductMutable> entry : this.kuchenList.entrySet()) {
       if (kuchenSorte.isInstance(entry.getValue())) {

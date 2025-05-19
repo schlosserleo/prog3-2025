@@ -9,11 +9,12 @@ import kuchen.Allergen;
 import kuchen.Obsttorte;
 
 public class ObsttorteImpl extends CakeProductImpl implements Obsttorte {
+
   private final Krem krem;
   private final Obst obst;
 
-  public ObsttorteImpl(BigDecimal preis, int naehrwert,
-      Collection<Allergen> allergene, Duration haltbarkeit, Krem krem, Obst obst) {
+  public ObsttorteImpl(BigDecimal preis, int naehrwert, Collection<Allergen> allergene,
+      Duration haltbarkeit, Obst obst, Krem krem) {
     super(preis, naehrwert, allergene, haltbarkeit);
     this.krem = krem;
     this.obst = obst;
